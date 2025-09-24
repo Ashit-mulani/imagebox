@@ -9,6 +9,13 @@ import getRouter from './router/get-route.js';
 
 const app = express();
 
+app.get('/api/v1/health', cors(), (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.use(
   cors({
     origin: ['https://imagebox-six.vercel.app', 'http://localhost:5173'],
