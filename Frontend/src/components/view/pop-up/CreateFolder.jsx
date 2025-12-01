@@ -46,6 +46,7 @@ const CreateFolder = () => {
     }
   };
 
+  
   return (
     <Dialog
       open={createFolder}
@@ -57,20 +58,28 @@ const CreateFolder = () => {
         }
       }}
     >
-      <DialogContent className="dark:bg-[#212121] bg-[#F7F5F2]">
-        <DialogHeader>
-          <DialogTitle>Create New Folder</DialogTitle>
-          <DialogDescription>
-            Create a folder to help organize and store your images.
+      <DialogContent
+        showCloseButton={false}
+        className="rounded-4xl border-0 dark:bg-[#1a1a1a] bg-slate-100 gap-8"
+      >
+        <DialogHeader className="gap-6">
+          <DialogTitle className="text-2xl font-normal">
+            Create New Folder
+          </DialogTitle>
+          <DialogDescription className="text-zinc-600 dark:text-zinc-400 ">
+            Create a new folder to organize and manage your images efficiently.
+            Keep your workspace clean and easily access files whenever you need
+            them.
           </DialogDescription>
         </DialogHeader>
         <div>
           <form
             onSubmit={handleSubmit(handleCreateFolder)}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-8"
           >
             <div>
               <CInput
+                className="py-5 px-4"
                 label="Folder"
                 id="folder"
                 placeholder="Folder name here . . . ."
@@ -95,19 +104,25 @@ const CreateFolder = () => {
               )}
             </div>
             <DialogFooter>
-              <DialogClose asChild>
+              <div className="flex items-end justify-end">
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="p-5 text-blue-600 hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-300 rounded-full dark:text-blue-300"
+                    onClick={() => setCreateFolder(false)}
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
                 <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setCreateFolder(false)}
+                  disabled={folderLoading}
+                  variant="ghost"
+                  className="p-5 text-blue-600 hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-300 rounded-full dark:text-blue-300"
                 >
-                  Cancel
+                  {folderLoading && <CLoader />}Create
                 </Button>
-              </DialogClose>
-
-              <Button disabled={folderLoading}>
-                {folderLoading && <CLoader />}Create
-              </Button>
+              </div>
             </DialogFooter>
           </form>
         </div>
