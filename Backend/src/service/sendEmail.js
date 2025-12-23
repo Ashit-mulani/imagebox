@@ -4,10 +4,10 @@ import { apiError } from '../utils/apiError.js';
 
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendOTP = async (to, otp, userName) => {
-  const fromAddress = `Imagebox <onboarding@resend.dev>`;
+  const from = `Imagebox <no-reply@mail.imagebox.fluoce.com>`;
   const subject = 'Your ImageBox Verification Code';
   const body = `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; padding: 40px 20px;">
@@ -32,24 +32,22 @@ export const sendOTP = async (to, otp, userName) => {
     `;
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: fromAddress,
+    const response = await resend.emails.send({
+      from,
       to: [to],
       subject: subject,
       html: body,
     });
-    if (!data) {
+    if (!response.data) {
       throw new apiError(500, 'Failed to send email, try later');
     }
   } catch (err) {
-    console.log(err);
-
     throw new apiError(500, err?.message || 'Failed to send email with resend');
   }
 };
 
 export const sendResetPassOtp = async (to, otp, userName) => {
-  const fromAddress = `Imagebox <onboarding@resend.dev>`;
+  const from = 'ImageBox <no-reply@mail.imagebox.fluoce.com>';
 
   const subject = 'Your ImageBox Verification Code';
 
@@ -77,7 +75,7 @@ export const sendResetPassOtp = async (to, otp, userName) => {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: fromAddress,
+      from,
       to: [to],
       subject: subject,
       html: body,
