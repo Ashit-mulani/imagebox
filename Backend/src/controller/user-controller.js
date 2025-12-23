@@ -61,7 +61,7 @@ const singup = asyncFunc(async (req, res) => {
     .json(
       new apiRes(
         201,
-        { userEmail: user.email },
+        { email: user.email },
         'User register successfuly, OTP has been sent to your email'
       )
     );
