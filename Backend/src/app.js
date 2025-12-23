@@ -6,6 +6,9 @@ import { errorHandler } from './utils/errorHandler.js';
 import folderRouter from './router/folder-route.js';
 import imageRouter from './router/image-route.js';
 import getRouter from './router/get-route.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 
@@ -18,7 +21,7 @@ app.get('/api/v1/health', cors(), (req, res) => {
 
 app.use(
   cors({
-    origin: ['https://imagebox-six.vercel.app', 'http://localhost:5173'],
+    origin: [process.env.FRONTEND_URL, 'http://localhost:5173'],
     credentials: true,
   })
 );

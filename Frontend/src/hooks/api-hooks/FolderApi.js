@@ -22,7 +22,7 @@ export default function useFolderApi() {
   const { trashFolder } = useSelector((state) => state.trash);
 
   const getFolder = async () => {
-    if (folderFetched) return;
+    if (folderFetched && folder?.length > 0) return;
     dispatch(setInitialFolderLoading(true));
     try {
       const res = await axios.get(`${backendUrl}/get/folders`, {
