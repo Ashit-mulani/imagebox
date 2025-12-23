@@ -1,52 +1,69 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 
 export const useLongPress = (
   onLongPress,
   onClick,
-  { shouldPreventDefault = true, delay = 600 } = {}
+  { delay = 600, moveThreshold = 10 } = {}
 ) => {
-  const [longPressTriggered, setLongPressTriggered] = useState(false);
-  const timeout = useRef();
-  const target = useRef();
+  const timeout = useRef(null);
+  const startPos = useRef({ x: 0, y: 0 });
+  const moved = useRef(false);
+  const longPressTriggered = useRef(false);
 
   const start = useCallback(
-    (event) => {
-      if (shouldPreventDefault && event.target) {
-        event.target.addEventListener("touchend", preventDefault, {
-          passive: false,
-        });
-        target.current = event.target;
-      }
+    (e) => {
+      moved.current = false;
+      longPressTriggered.current = false;
+
+      const point = "touches" in e ? e.touches[0] : e;
+      startPos.current = { x: point.clientX, y: point.clientY };
+
       timeout.current = setTimeout(() => {
-        onLongPress(event);
-        setLongPressTriggered(true);
+        onLongPress(e);
+        longPressTriggered.current = true;
       }, delay);
     },
-    [onLongPress, delay, shouldPreventDefault]
+    [onLongPress, delay]
+  );
+
+  const move = useCallback(
+    (e) => {
+      const point = "touches" in e ? e.touches[0] : e;
+      const dx = Math.abs(point.clientX - startPos.current.x);
+      const dy = Math.abs(point.clientY - startPos.current.y);
+
+      if (dx > moveThreshold || dy > moveThreshold) {
+        moved.current = true;
+        clearTimeout(timeout.current);
+      }
+    },
+    [moveThreshold]
   );
 
   const clear = useCallback(
-    (event, shouldTriggerClick = true) => {
-      if (timeout.current) {
-        clearTimeout(timeout.current);
-      }
-      if (shouldTriggerClick && !longPressTriggered) {
-        onClick(event);
-      }
-      setLongPressTriggered(false);
-      if (shouldPreventDefault && target.current) {
-        target.current.removeEventListener("touchend", preventDefault);
+    (e) => {
+      clearTimeout(timeout.current);
+
+      if (!moved.current && !longPressTriggered.current) {
+        onClick(e);
       }
     },
-    [onClick, shouldPreventDefault, longPressTriggered]
+    [onClick]
   );
 
   return {
-    onMouseDown: (e) => start(e),
-    onTouchStart: (e) => start(e),
-    onMouseUp: (e) => clear(e),
-    onMouseLeave: (e) => clear(e, false),
-    onTouchEnd: (e) => clear(e),
+    onTouchStart: start,
+    onTouchMove: move,
+    onTouchEnd: clear,
+    onTouchCancel: () => {
+      clearTimeout(timeout.current);
+      moved.current = true;
+    },
+
+    onMouseDown: start,
+    onMouseMove: move,
+    onMouseUp: clear,
+
     onContextMenu: (e) => {
       e.preventDefault();
       onLongPress(e);
