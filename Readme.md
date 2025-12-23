@@ -60,7 +60,6 @@ A user-friendly cloud platform enabling seamless photo uploads, album organizati
    npm run dev
    ```
 
-5. **Access the app at**: [http://localhost:3000](http://localhost:3000)
 
 ## 🤝 Contributing
 
