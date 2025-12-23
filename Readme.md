@@ -28,7 +28,6 @@ Developed as a **Full-Stack Developer**.
 
 ## 🔗 Useful Links
 
-- [More Information](/projects/imagebox)
 - [GitHub Repository](https://github.com/Ashit-mulani/imagebox)
 - [Live Preview](https://imagebox.fluoce.com/user/home)
 
