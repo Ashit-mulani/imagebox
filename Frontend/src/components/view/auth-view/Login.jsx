@@ -29,6 +29,10 @@ const Login = () => {
   const handleRegister = async (data) => {
     const success = await login(data);
     if (success) {
+      if (!success.isVerified) {
+        navigate("/auth/Verify-otp");
+        return;
+      }
       dispatch(setUserError(null));
       navigate("/user/home");
     }

@@ -63,7 +63,7 @@ export default function useUserApi() {
       const res = await axios.post(
         `${backendUrl}/user/verifyOtp`,
         {
-          email: user?.userEmail,
+          email: user?.email,
           otp: data.otp,
         },
         { withCredentials: true }
@@ -91,9 +91,10 @@ export default function useUserApi() {
         withCredentials: true,
       });
       const userData = res?.data?.data;
+
       if (userData) {
         dispatch(setUser(userData));
-        return true;
+        return userData;
       }
     } catch (error) {
       dispatch(

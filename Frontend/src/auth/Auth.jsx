@@ -9,7 +9,7 @@ const Auth = ({ children }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setChecking(false);
-    }, 120);
+    }, 200);
     return () => clearTimeout(timer);
   }, [user]);
 

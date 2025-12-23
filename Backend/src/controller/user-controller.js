@@ -4,7 +4,7 @@ import { asyncFunc } from '../utils/asyncFunc.js';
 import { apiError } from '../utils/apiError.js';
 import { apiRes } from '../utils/apiRes.js';
 import crypto from 'crypto';
-import { sendOTP, sendResetPassOtp } from '../service/nodemailer.js';
+import { sendOTP, sendResetPassOtp } from '../service/sendEmail.js';
 import { cookieOption } from '../utils/cookieOption.js';
 import { getTokens } from '../utils/token.js';
 import { validateFields } from '../utils/validateFields.js';
@@ -52,7 +52,9 @@ const singup = asyncFunc(async (req, res) => {
     throw new apiError(500, 'Failed to register, Please try again later.');
   }
 
-  sendOTP(user.email, otpCode, user.userName);
+  try {
+    await sendOTP(user.email, otpCode, user.userName);
+  } catch (error) {}
 
   return res
     .status(200)
@@ -135,7 +137,9 @@ const login = asyncFunc(async (req, res) => {
 
     await user.save();
 
-    sendOTP(user?.email, otpCode, user?.userName);
+    try {
+      await sendOTP(user?.email, otpCode, user?.userName);
+    } catch (error) {}
 
     return res
       .status(200)
@@ -179,7 +183,9 @@ const resetPasswordOtp = asyncFunc(async (req, res) => {
 
   await user.save();
 
-  sendResetPassOtp(user.email, otpCode, user.userName);
+  try {
+    await sendResetPassOtp(user.email, otpCode, user.userName);
+  } catch (error) {}
 
   return res
     .status(200)

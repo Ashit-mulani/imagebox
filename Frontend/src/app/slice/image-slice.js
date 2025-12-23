@@ -15,6 +15,7 @@ const imageSlice = createSlice({
   reducers: {
     setImage: (state, action) => {
       const { folderId, images, fetched = true } = action.payload;
+      if (!action.payload) return;
       state.image[folderId] = { data: images, fetched };
     },
     appendImage: (state, action) => {

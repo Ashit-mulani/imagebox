@@ -49,7 +49,7 @@ const Search = ({ open, setOpen }) => {
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Folders">
-              {folder.map((f) => (
+              {folder?.map((f) => (
                 <CommandItem
                   onSelect={() => (
                     setOpen(false), navigate(`/user/folder/${f?._id}`)

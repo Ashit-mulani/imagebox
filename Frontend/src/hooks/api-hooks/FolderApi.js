@@ -52,7 +52,11 @@ export default function useFolderApi() {
       });
       const createdFolder = res?.data?.data;
       if (createdFolder) {
-        dispatch(setFolder([...folder, createdFolder]));
+        if (folder) {
+          dispatch(setFolder([...folder, createdFolder]));
+        } else {
+          dispatch(setFolder([createdFolder]));
+        }
       }
       return createdFolder?._id;
     } catch (error) {

@@ -24,6 +24,8 @@ const VerifyOtp = () => {
 
   const navigate = useNavigate();
 
+  console.log(user);
+
   const handleRegister = async (data) => {
     const success = await verifyOtp(data);
     if (success) {
@@ -31,6 +33,10 @@ const VerifyOtp = () => {
       navigate("/user/home");
     }
   };
+
+  if (!user?.email) {
+    navigate("/auth/login");
+  }
 
   return (
     <div className="max-w-[330px] w-full p-4 flex flex-col overflow-hidden gap-8 items-center justify-center">

@@ -1,24 +1,15 @@
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import { Resend } from 'resend';
+import { apiError } from '../utils/apiError.js';
 
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND);
 
 export const sendOTP = async (to, otp, userName) => {
-  const mailOptions = {
-    from: `"ImageStore" <${process.env.EMAIL_USER}>`,
-    to,
-    subject: '🔐 Your OTP Code for Email Verification',
-    html: `
+  const fromAddress = `Imagebox <onboarding@resend.dev>`;
+  const subject = 'Your ImageBox Verification Code';
+  const body = `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; padding: 40px 20px;">
         <div style="max-width: 600px; background: #fff; margin: auto; border-radius: 10px; padding: 30px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
           <h2 style="color: #333;">Hello <span style="color: #007BFF;">${userName}</span>,</h2>
@@ -38,18 +29,31 @@ export const sendOTP = async (to, otp, userName) => {
           </p>
         </div>
       </div>
-    `,
-  };
+    `;
 
-  await transporter.sendMail(mailOptions);
+  try {
+    const { data, error } = await resend.emails.send({
+      from: fromAddress,
+      to: [to],
+      subject: subject,
+      html: body,
+    });
+    if (!data) {
+      throw new apiError(500, 'Failed to send email, try later');
+    }
+  } catch (err) {
+    console.log(err);
+
+    throw new apiError(500, err?.message || 'Failed to send email with resend');
+  }
 };
 
 export const sendResetPassOtp = async (to, otp, userName) => {
-  const mailOptions = {
-    from: `"ImageStore" <${process.env.EMAIL_USER}>`,
-    to,
-    subject: '🔐 Your OTP Code for Password Reset',
-    html: `
+  const fromAddress = `Imagebox <onboarding@resend.dev>`;
+
+  const subject = 'Your ImageBox Verification Code';
+
+  const body = `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; padding: 40px 20px;">
         <div style="max-width: 600px; background: #fff; margin: auto; border-radius: 10px; padding: 30px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
           <h2 style="color: #333;">Hello <span style="color: #007BFF;">${userName}</span>,</h2>
@@ -69,8 +73,19 @@ export const sendResetPassOtp = async (to, otp, userName) => {
           </p>
         </div>
       </div>
-    `,
-  };
+    `;
 
-  await transporter.sendMail(mailOptions);
+  try {
+    const { data, error } = await resend.emails.send({
+      from: fromAddress,
+      to: [to],
+      subject: subject,
+      html: body,
+    });
+    if (!data) {
+      throw new apiError(500, 'Failed to send email, try later');
+    }
+  } catch (err) {
+    throw new apiError(500, err?.message || 'Failed to send email with resend');
+  }
 };
